@@ -2,13 +2,11 @@ from collections import defaultdict, Counter
 
 import numpy as np
 
-from ACF_code.algorithm import give_log_padding, get_ngrams_dict, get_context_dict, \
+from ACF_code.data_util.algorithm import give_log_padding, get_ngrams_dict, get_context_dict, \
     get_cosine_distance_dict
 from math import floor
-
-
 #from additional_scripts.embedding_as_heatmap import plot_heatmap
-#from ACF_code.AACO_matrics import get_bag_of_words_context_dict
+from ACF_code.activity_activity_co_occurence.activity_activity_co_occurrence import get_bag_of_words_context_dict
 def get_activity_embeddings(context_dict):
     del context_dict["."]
     all_contexts = sorted(set(context for activity in context_dict.values() for context in activity))
@@ -122,13 +120,3 @@ def get_activity_context_frequency_matrix(log, alphabet, ngram_size, bag_of_word
 
     distance_matrix = get_cosine_distance_dict(embeddings)
     return distance_matrix, embeddings, activity_freq_dict, context_freq_dict, context_index
-
-
-
-def get_bag_of_words_context_dict(context_dict):
-    bag_of_words_context_dict = defaultdict(lambda: defaultdict(int))  # Nested defaultdict for context frequencies
-    for activity, contexts in context_dict.items():
-        for context, freq in context_dict[activity].items():
-            key_as_multiset = frozenset(Counter(context).items())
-            bag_of_words_context_dict[activity][key_as_multiset] += freq
-    return {k: dict(v) for k, v in bag_of_words_context_dict.items()}  # Convert inner defaultdicts to regular

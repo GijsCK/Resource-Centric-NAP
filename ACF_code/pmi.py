@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from ACF_code.algorithm import give_log_padding, get_ngrams_dict, get_context_dict, \
+from ACF_code.data_util.algorithm import give_log_padding, get_ngrams_dict, get_context_dict, \
     get_cosine_distance_dict
 
 def get_activity_context_frequency_matrix_pmi(embeddings, activity_freq_dict, context_freq_dict, context_index, ppmi):
