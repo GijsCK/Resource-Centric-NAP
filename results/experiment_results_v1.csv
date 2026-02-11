@@ -1,0 +1,7 @@
+dataset,strategy,length_or_k,method,accuracy,f1_score,train_size,test_size,status,grid_search_time,rf_max_depth,rf_max_features,rf_min_samples_leaf,rf_min_samples_split,rf_n_estimators
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,OHE,0.6944444444444444,0.6653924566768603,552,144,Success,12.90480351448059,10,sqrt,1,5,200
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,Bigram,0.6736111111111112,0.6237601131639324,552,144,Success,4.962151765823364,20,sqrt,1,5,200
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,W2V,0.6805555555555556,0.5947582453186607,552,144,Success,4.810160875320435,10,sqrt,1,2,100
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,D2V,0.7013888888888888,0.6076418190342241,552,144,Success,7.212867736816406,20,sqrt,2,2,100
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,BERT,0.7152777777777778,0.6777356902356904,552,144,Success,7.0834925174713135,10,sqrt,2,5,200
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,ACF,0.7083333333333334,0.609375,552,144,Success,6.7626259326934814,10,sqrt,2,2,100
