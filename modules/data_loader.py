@@ -107,7 +107,7 @@ def process_dataset(df, prefix_length,strategy='prefix', k=None):
     elif strategy == 'last_k':
         train_df = build_prefix_df(train_split, [prefix_length], False, True,k=k)
         test_df = build_prefix_df(test_split, [prefix_length], False, True, k=k)
-    elif strategy == 'sliding':
+    elif strategy == 'sliding_window':
         train_df = build_prefix_df(train_split, [prefix_length], True, False)
         test_df = build_prefix_df(test_split, [prefix_length], True, False)    
 

@@ -11,10 +11,10 @@ from modules.rf_trainer import (
 
 # --- CONFIGURATION ---
 DATASETS = ["datasets/BPI_Challenge_2013_incidents.xes"]
-PREFIX_LENGTHS = [10, 20]
+PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
 K_VALUES = [3, 5, 10, 20]
 METHODS = ['OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
-STRATEGIES = ['prefix', 'sliding_window', 'last_k']
+STRATEGIES = ['last_k']
 
 # Grid search configuration
 USE_GRID_SEARCH = True  # Set to False for faster runs without grid search
@@ -59,20 +59,26 @@ if __name__ == "__main__":
         for strategy in STRATEGIES:
             print(f"\n--- Strategy: {strategy.upper()} ---")
             
-            if strategy == 'last_k':
-                current_lengths = K_VALUES
-                length_label = "K"
-            else:
-                current_lengths = PREFIX_LENGTHS
-                length_label = "Prefix Length"
+            tasks = []
             
-            for length in current_lengths:
-                print(f"\n  {length_label}: {length}")
+            if strategy == 'last_k':
+                # For last_k, we need to test every K for every Prefix
+                # This creates pairs: (10, 3), (10, 5), ..., (20, 3), etc.
+                # 
+                tasks = list(itertools.product(PREFIX_LENGTHS, K_VALUES))
+            else:
+                # For other strategies, K is not applicable (None)
+                # This creates pairs: (10, None), (20, None), etc.
+                tasks = [(p, None) for p in PREFIX_LENGTHS]
+            
+            for length, k_val in tasks:
+                print(f"\n  {length}: {length}")
                 
                 try:
                     # 1. DATA PREPARATION
+
                     train_df, test_df, full_train_df, full_test_df = process_dataset(
-                        full_log, length, strategy=strategy
+                        full_log, length, strategy=strategy, k=k_val
                     )
                     
                     if train_df.empty or test_df.empty:
