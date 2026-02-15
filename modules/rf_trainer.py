@@ -35,6 +35,7 @@ def train_evaluate_rf_grid_search(X_train, X_test, y_train, y_test,
                                    param_grid=None, cv=3, scoring='f1_weighted'):
     """
     Train Random Forest with grid search and return best model + metrics.
+    Handles unseen labels in test set by filtering them out.
     
     Parameters:
     - X_train, X_test: Feature matrices
@@ -56,8 +57,28 @@ def train_evaluate_rf_grid_search(X_train, X_test, y_train, y_test,
     # Encode labels if they're strings
     if y_train.dtype == 'object' or isinstance(y_train[0], str):
         le = LabelEncoder()
-        y_train = le.fit_transform(y_train)
-        y_test = le.transform(y_test)
+        y_train_encoded = le.fit_transform(y_train)
+        
+        # Handle unseen labels in test set
+        seen_mask = np.isin(y_test, le.classes_)
+        n_unseen = (~seen_mask).sum()
+        
+        if n_unseen > 0:
+            print(f"      ⚠ Filtering {n_unseen}/{len(y_test)} test samples with unseen labels")
+            
+            # Filter test set
+            X_test = X_test[seen_mask]
+            y_test = y_test[seen_mask]
+            
+            # Check if we have any test samples left
+            if len(y_test) == 0:
+                raise ValueError("No test samples remain after filtering unseen labels")
+        
+        y_test_encoded = le.transform(y_test)
+        
+    else:
+        y_train_encoded = y_train
+        y_test_encoded = y_test
     
     # Create base estimator
     rf_base = RandomForestClassifier(**RF_BASE_PARAMS)
@@ -76,7 +97,7 @@ def train_evaluate_rf_grid_search(X_train, X_test, y_train, y_test,
         refit=True
     )
     
-    grid_search.fit(X_train, y_train)
+    grid_search.fit(X_train, y_train_encoded)
     grid_search_time = time.time() - start_time
     
     # Get best model
@@ -87,12 +108,10 @@ def train_evaluate_rf_grid_search(X_train, X_test, y_train, y_test,
     print(f"      Best params: {best_params}")
     
     # Evaluate on test set
-    start_time = time.time()
     y_pred = best_rf.predict(X_test)
-    pred_time = time.time() - start_time
     
-    accuracy = accuracy_score(y_test, y_pred)
-    f1score = f1_score(y_test, y_pred, average='weighted', zero_division=0)
+    accuracy = accuracy_score(y_test_encoded, y_pred)
+    f1score = f1_score(y_test_encoded, y_pred, average='weighted', zero_division=0)
     
     return accuracy, f1score, best_rf, best_params, grid_search_time
 
@@ -100,6 +119,7 @@ def train_evaluate_rf_grid_search(X_train, X_test, y_train, y_test,
 def train_evaluate_rf_simple(X_train, X_test, y_train, y_test, rf_params=None):
     """
     Train Random Forest with fixed parameters (no grid search).
+    Handles unseen labels in test set by filtering them out.
     
     Parameters:
     - X_train, X_test: Feature matrices
@@ -120,21 +140,37 @@ def train_evaluate_rf_simple(X_train, X_test, y_train, y_test, rf_params=None):
     # Encode labels if needed
     if y_train.dtype == 'object' or isinstance(y_train[0], str):
         le = LabelEncoder()
-        y_train = le.fit_transform(y_train)
-        y_test = le.transform(y_test)
+        y_train_encoded = le.fit_transform(y_train)
+        
+        # Handle unseen labels in test set
+        seen_mask = np.isin(y_test, le.classes_)
+        n_unseen = (~seen_mask).sum()
+        
+        if n_unseen > 0:
+            print(f"      ⚠ Filtering {n_unseen}/{len(y_test)} test samples with unseen labels")
+            X_test = X_test[seen_mask]
+            y_test = y_test[seen_mask]
+            
+            if len(y_test) == 0:
+                raise ValueError("No test samples remain after filtering unseen labels")
+        
+        y_test_encoded = le.transform(y_test)
+    else:
+        y_train_encoded = y_train
+        y_test_encoded = y_test
     
     # Train model
     rf = RandomForestClassifier(**rf_params)
     
     start_time = time.time()
-    rf.fit(X_train, y_train)
+    rf.fit(X_train, y_train_encoded)
     train_time = time.time() - start_time
     
     # Predict
     y_pred = rf.predict(X_test)
     
-    accuracy = accuracy_score(y_test, y_pred)
-    f1score = f1_score(y_test, y_pred, average='weighted', zero_division=0)
+    accuracy = accuracy_score(y_test_encoded, y_pred)
+    f1score = f1_score(y_test_encoded, y_pred, average='weighted', zero_division=0)
     
     return accuracy, f1score, rf
 

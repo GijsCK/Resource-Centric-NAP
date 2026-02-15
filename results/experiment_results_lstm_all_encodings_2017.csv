@@ -1,0 +1,65 @@
+dataset,strategy,length_or_k,method,accuracy,f1_score,train_size,test_size,input_dim,use_embedding,lstm_input_shape,status,train_time
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,Baseline,0.7083333333333334,0.599846954392409,552,144,4,True,"(552, 10)",Success,9.184710025787354
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,Baseline,0.7152777777777778,0.6139368521245111,552,144,4,True,"(552, 10)",Success,7.317461729049683
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,OHE,0.7152777777777778,0.6139368521245111,552,144,3,False,"(552, 10, 3)",Success,7.528662919998169
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,Bigram,,,552,144,,,,"Error: (slice(None, None, None), None, slice(None, None, None))"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,W2V,0.6944444444444444,0.569216757741348,552,144,16,False,"(552, 10, 16)",Success,4.947627067565918
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,D2V,0.7083333333333334,0.599846954392409,552,144,64,False,"(552, 10, 64)",Success,7.301625967025757
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,BERT,0.6944444444444444,0.569216757741348,552,144,128,False,"(552, 10, 128)",Success,4.401170492172241
+datasets/BPI_Challenge_2013_incidents.xes,prefix,10,ACF,0.6944444444444444,0.569216757741348,552,144,381,False,"(552, 10, 381)",Success,4.779548645019531
+datasets/BPI_Challenge_2013_incidents.xes,prefix,20,Baseline,0.7247706422018348,0.6168581344668944,389,109,3,True,"(389, 20)",Success,5.49614953994751
+datasets/BPI_Challenge_2013_incidents.xes,prefix,20,OHE,,,389,109,,,,"Error: cannot reshape array of size 22951 into shape (389,20,2)"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,20,Bigram,,,389,109,,,,"Error: (slice(None, None, None), None, slice(None, None, None))"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,20,W2V,0.7155963302752294,0.5969680616199774,389,109,16,False,"(389, 20, 16)",Success,3.6876003742218018
+datasets/BPI_Challenge_2013_incidents.xes,prefix,20,D2V,0.7064220183486238,0.5924829831311038,389,109,64,False,"(389, 20, 64)",Success,4.925477743148804
+datasets/BPI_Challenge_2013_incidents.xes,prefix,20,BERT,0.7155963302752294,0.5969680616199774,389,109,128,False,"(389, 20, 128)",Success,3.7129573822021484
+datasets/BPI_Challenge_2013_incidents.xes,prefix,20,ACF,0.6972477064220184,0.5879494173072155,389,109,381,False,"(389, 20, 381)",Success,5.487594842910767
+datasets/BPI_Challenge_2013_incidents.xes,prefix,30,Baseline,0.6744186046511628,0.5432816537467701,310,86,3,True,"(310, 30)",Success,5.3580076694488525
+datasets/BPI_Challenge_2013_incidents.xes,prefix,30,OHE,,,310,86,,,,"Error: cannot reshape array of size 27590 into shape (310,30,2)"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,30,Bigram,,,310,86,,,,"Error: (slice(None, None, None), None, slice(None, None, None))"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,30,W2V,0.6744186046511628,0.5432816537467701,310,86,16,False,"(310, 30, 16)",Success,7.052889347076416
+datasets/BPI_Challenge_2013_incidents.xes,prefix,30,D2V,0.6744186046511628,0.5432816537467701,310,86,64,False,"(310, 30, 64)",Success,5.04267430305481
+datasets/BPI_Challenge_2013_incidents.xes,prefix,30,BERT,0.6744186046511628,0.5432816537467701,310,86,128,False,"(310, 30, 128)",Success,4.095524787902832
+datasets/BPI_Challenge_2013_incidents.xes,prefix,30,ACF,0.6744186046511628,0.5432816537467701,310,86,381,False,"(310, 30, 381)",Success,8.534891366958618
+datasets/BPI_Challenge_2013_incidents.xes,prefix,40,Baseline,0.6486486486486487,0.5253517980790707,263,74,3,True,"(263, 40)",Success,7.743088960647583
+datasets/BPI_Challenge_2013_incidents.xes,prefix,40,OHE,,,263,74,,,,"Error: cannot reshape array of size 31297 into shape (263,40,2)"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,40,Bigram,,,263,74,,,,"Error: (slice(None, None, None), None, slice(None, None, None))"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,40,W2V,0.6621621621621622,0.5275763568446495,263,74,16,False,"(263, 40, 16)",Success,7.35192346572876
+datasets/BPI_Challenge_2013_incidents.xes,prefix,40,D2V,0.6621621621621622,0.5275763568446495,263,74,64,False,"(263, 40, 64)",Success,5.952038288116455
+datasets/BPI_Challenge_2013_incidents.xes,prefix,40,BERT,0.6621621621621622,0.5275763568446495,263,74,128,False,"(263, 40, 128)",Success,4.243149280548096
+datasets/BPI_Challenge_2013_incidents.xes,prefix,40,ACF,0.6621621621621622,0.5275763568446495,263,74,381,False,"(263, 40, 381)",Success,10.067871570587158
+datasets/BPI_Challenge_2013_incidents.xes,prefix,50,Baseline,0.7166666666666667,0.6571095571095571,231,60,3,True,"(231, 50)",Success,6.378820419311523
+datasets/BPI_Challenge_2013_incidents.xes,prefix,50,OHE,,,231,60,,,,"Error: cannot reshape array of size 34419 into shape (231,50,2)"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,50,Bigram,,,231,60,,,,"Error: (slice(None, None, None), None, slice(None, None, None))"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,50,W2V,0.7666666666666667,0.6782051282051282,231,60,16,False,"(231, 50, 16)",Success,6.141860008239746
+datasets/BPI_Challenge_2013_incidents.xes,prefix,50,D2V,0.7166666666666667,0.6512121212121211,231,60,64,False,"(231, 50, 64)",Success,5.759950637817383
+datasets/BPI_Challenge_2013_incidents.xes,prefix,50,BERT,0.75,0.6428571428571428,231,60,128,False,"(231, 50, 128)",Success,3.8393778800964355
+datasets/BPI_Challenge_2013_incidents.xes,prefix,50,ACF,0.75,0.6428571428571428,231,60,381,False,"(231, 50, 381)",Success,5.306532621383667
+datasets/BPI_Challenge_2013_incidents.xes,prefix,75,Baseline,0.6363636363636364,0.494949494949495,178,44,3,True,"(178, 75)",Success,5.925095558166504
+datasets/BPI_Challenge_2013_incidents.xes,prefix,75,OHE,,,178,44,,,,"Error: cannot reshape array of size 39872 into shape (178,75,2)"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,75,Bigram,,,178,44,,,,"Error: (slice(None, None, None), None, slice(None, None, None))"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,75,W2V,0.6363636363636364,0.494949494949495,178,44,16,False,"(178, 75, 16)",Success,4.767921686172485
+datasets/BPI_Challenge_2013_incidents.xes,prefix,75,D2V,0.6136363636363636,0.4839948783610755,178,44,64,False,"(178, 75, 64)",Success,5.474822044372559
+datasets/BPI_Challenge_2013_incidents.xes,prefix,75,BERT,0.6363636363636364,0.494949494949495,178,44,128,False,"(178, 75, 128)",Success,4.594876766204834
+datasets/BPI_Challenge_2013_incidents.xes,prefix,75,ACF,0.6363636363636364,0.494949494949495,178,44,381,False,"(178, 75, 381)",Success,5.157133340835571
+datasets/BPI_Challenge_2013_incidents.xes,prefix,100,Baseline,0.75,0.6428571428571428,138,40,3,True,"(138, 100)",Success,4.584074020385742
+datasets/BPI_Challenge_2013_incidents.xes,prefix,100,OHE,,,138,40,,,,"Error: cannot reshape array of size 41124 into shape (138,100,2)"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,100,Bigram,,,138,40,,,,"Error: (slice(None, None, None), None, slice(None, None, None))"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,100,W2V,0.75,0.6428571428571428,138,40,16,False,"(138, 100, 16)",Success,3.8747189044952393
+datasets/BPI_Challenge_2013_incidents.xes,prefix,100,D2V,0.725,0.6304347826086956,138,40,64,False,"(138, 100, 64)",Success,5.593370676040649
+datasets/BPI_Challenge_2013_incidents.xes,prefix,100,BERT,0.75,0.6428571428571428,138,40,128,False,"(138, 100, 128)",Success,6.561507940292358
+datasets/BPI_Challenge_2013_incidents.xes,prefix,100,ACF,0.75,0.6428571428571428,138,40,381,False,"(138, 100, 381)",Success,6.341601610183716
+datasets/BPI_Challenge_2013_incidents.xes,prefix,125,Baseline,0.625,0.4807692307692308,115,32,3,True,"(115, 125)",Success,5.444552659988403
+datasets/BPI_Challenge_2013_incidents.xes,prefix,125,OHE,,,115,32,,,,"Error: cannot reshape array of size 42895 into shape (115,125,2)"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,125,Bigram,,,115,32,,,,"Error: (slice(None, None, None), None, slice(None, None, None))"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,125,W2V,0.625,0.4807692307692308,115,32,16,False,"(115, 125, 16)",Success,5.219024181365967
+datasets/BPI_Challenge_2013_incidents.xes,prefix,125,D2V,0.59375,0.46568627450980393,115,32,64,False,"(115, 125, 64)",Success,7.603200912475586
+datasets/BPI_Challenge_2013_incidents.xes,prefix,125,BERT,0.625,0.4807692307692308,115,32,128,False,"(115, 125, 128)",Success,4.481360673904419
+datasets/BPI_Challenge_2013_incidents.xes,prefix,125,ACF,0.625,0.4807692307692308,115,32,381,False,"(115, 125, 381)",Success,4.953536748886108
+datasets/BPI_Challenge_2013_incidents.xes,prefix,150,Baseline,0.6538461538461539,0.516994633273703,92,26,3,True,"(92, 150)",Success,5.8728883266448975
+datasets/BPI_Challenge_2013_incidents.xes,prefix,150,OHE,,,92,26,,,,"Error: cannot reshape array of size 41032 into shape (92,150,2)"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,150,Bigram,,,92,26,,,,"Error: (slice(None, None, None), None, slice(None, None, None))"
+datasets/BPI_Challenge_2013_incidents.xes,prefix,150,W2V,0.6538461538461539,0.516994633273703,92,26,16,False,"(92, 150, 16)",Success,5.593668460845947
+datasets/BPI_Challenge_2013_incidents.xes,prefix,150,D2V,0.6538461538461539,0.516994633273703,92,26,64,False,"(92, 150, 64)",Success,5.921329021453857
+datasets/BPI_Challenge_2013_incidents.xes,prefix,150,BERT,0.6538461538461539,0.516994633273703,92,26,128,False,"(92, 150, 128)",Success,5.8510308265686035
+datasets/BPI_Challenge_2013_incidents.xes,prefix,150,ACF,0.6538461538461539,0.516994633273703,92,26,381,False,"(92, 150, 381)",Success,6.5914318561553955

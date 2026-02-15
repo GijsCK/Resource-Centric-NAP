@@ -2,7 +2,7 @@ import pandas as pd
 import traceback
 import os
 from modules.data_loader import process_dataset, import_xes
-from modules.encoders import one_hot_encoding, bigram, word2vec, doc2vec, bert, acf 
+from modules.encoders import baseline, one_hot_encoding, bigram, word2vec, doc2vec, bert, acf
 from modules.rf_trainer import (
     train_evaluate_rf_grid_search, 
     train_evaluate_rf_simple,
@@ -10,18 +10,25 @@ from modules.rf_trainer import (
 )
 
 # --- CONFIGURATION ---
-DATASETS = ["datasets/BPI_Challenge_2013_incidents.xes"]
-PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
+DATASETS = ["datasets/BPI_Challenge_2017.xes"]
+#PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
+PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000]
+#PREFIX_LENGHTS = [100, 150, 200, 300, 400, 500, 600, 700, 800]
 K_VALUES = [3, 5, 10, 20]
-METHODS = ['OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
-STRATEGIES = ['last_k']
+#METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
+METHODS = ['Baseline'] 
+
+
+#STRATEGIES = ['prefix', 'sliding_window', 'last_k']
+STRATEGIES = ['prefix', 'sliding_window','last_k']
+
 
 # Grid search configuration
-USE_GRID_SEARCH = True  # Set to False for faster runs without grid search
-GRID_SEARCH_CV = 3      # Number of CV folds
-GRID_SEARCH_SCORING = 'f1_weighted'  # or 'accuracy'
+USE_GRID_SEARCH = True 
+GRID_SEARCH_CV = 3   
+GRID_SEARCH_SCORING = 'accuracy' 
 
-RESULTS_FILE = "results/experiment_results_v1.csv"
+RESULTS_FILE = "results/experiment_results_2017.csv"
 os.makedirs("results", exist_ok=True)
 
 print("Configuration loaded")
@@ -137,7 +144,11 @@ if __name__ == "__main__":
                         
                         try:
                             # 2. ENCODING
-                            if method == 'OHE':
+                            if method == 'Baseline':
+                                X_train, X_test = baseline.prepare_data_for_prediction(train_df, test_df)
+                                y_train = train_df['next_activity'].values
+                                y_test = test_df['next_activity'].values
+                            elif method == 'OHE':
                                 X_train, X_test = one_hot_encoding.prepare_data_for_prediction(train_df, test_df)
                                 y_train = train_df['next_activity'].values
                                 y_test = test_df['next_activity'].values
@@ -188,11 +199,17 @@ if __name__ == "__main__":
                                 )
                                 best_params = {}
                                 grid_time = 0
+                            
+                            if strategy == 'last_k':
+                                strat = 'last' + str(k_val)
+                            else:
+                                strat = strategy
+
 
                             # 4. LOGGING
                             result = {
                                 'dataset': dataset_path,
-                                'strategy': strategy,
+                                'strategy': strat,
                                 'length_or_k': length,
                                 'method': method,
                                 'accuracy': accuracy,
