@@ -1,40 +1,42 @@
 import pandas as pd
 import traceback
 import os
-import itertools
 from modules.data_loader import process_dataset, import_xes
 from modules.encoders import baseline, one_hot_encoding, bigram, word2vec, doc2vec, bert, acf
-
-# Import LSTM functions
-from modules.lstm_trainer import (
-    train_evaluate_lstm_grid_search,
-    train_evaluate_lstm,
-    LSTM_PARAM_GRID
+from modules.lgbm_trainer import (
+    train_evaluate_lgbm_grid_search, 
+    train_evaluate_lgbm_simple,
+    LGBM_PARAM_GRID
 )
 
-# Import data adapter
-from modules.lstm_data_adapter import adapt_encoding_for_lstm
 
 # --- CONFIGURATION ---
-DATASETS = ["datasets/BPI_Challenge_2017.xes"]
-PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000]
-#PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
+DATASETS = ["datasets/BPI_Challenge_2013_incidents.xes"]
+PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
+#PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000]
+#PREFIX_LENGHTS = [100, 150, 200, 300, 400, 500, 600, 700, 800]
 K_VALUES = [3, 5, 10, 20]
-# Test all methods with LSTM!
 METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
+#METHODS = ['Baseline'] 
 
-STRATEGIES = ['last_k']
+
+#STRATEGIES = ['prefix', 'sliding_window', 'last_k']
+STRATEGIES = ['prefix']
+
 
 # Grid search configuration
-USE_GRID_SEARCH = False  # Set to True for hyperparameter tuning (much slower)
+USE_GRID_SEARCH = True 
+GRID_SEARCH_CV = 3   
+GRID_SEARCH_SCORING = 'accuracy' 
 
-RESULTS_FILE = "results/experiment_results_lstm_all_encodings_2017.csv"
+RESULTS_FILE = "results/experiment_results_2013_lgbm.csv"
 os.makedirs("results", exist_ok=True)
 
 print("Configuration loaded")
 print(f"Grid Search: {'ENABLED' if USE_GRID_SEARCH else 'DISABLED'}")
 if USE_GRID_SEARCH:
-    n_combinations = len(list(itertools.product(*LSTM_PARAM_GRID.values())))
+    import itertools
+    n_combinations = len(list(itertools.product(*LGBM_PARAM_GRID.values())))
     print(f"Testing {n_combinations} parameter combinations per experiment")
 
 
@@ -43,12 +45,11 @@ def log_result(result_dict):
     df = pd.DataFrame([result_dict])
     header = not os.path.exists(RESULTS_FILE)
     df.to_csv(RESULTS_FILE, mode='a', header=header, index=False)
-    acc_str = f"{result_dict.get('accuracy', 0):.4f}" if result_dict.get('accuracy') is not None else 'N/A'
-    print(f"✓ Saved: {result_dict['method']} - Acc: {acc_str}")
+    print(f"✓ Saved: {result_dict['method']} - Acc: {result_dict.get('accuracy', 'N/A'):.4f}")
 
 
 if __name__ == "__main__":
-    print("Starting LSTM experiment loop (ALL ENCODINGS)...")
+    print("Starting experiment loop...")
     
     for dataset_path in DATASETS:
         print(f"\n{'='*80}")
@@ -69,29 +70,32 @@ if __name__ == "__main__":
             tasks = []
             
             if strategy == 'last_k':
+                # For last_k, we need to test every K for every Prefix
+                # This creates pairs: (10, 3), (10, 5), ..., (20, 3), etc.
+                # 
                 tasks = list(itertools.product(PREFIX_LENGTHS, K_VALUES))
             else:
+                # For other strategies, K is not applicable (None)
+                # This creates pairs: (10, None), (20, None), etc.
                 tasks = [(p, None) for p in PREFIX_LENGTHS]
             
             for length, k_val in tasks:
-                print(f"\n  Length: {length}, K: {k_val if k_val else 'N/A'}")
+                print(f"\n  {length}: {length}")
                 
                 try:
                     # 1. DATA PREPARATION
+
                     train_df, test_df, full_train_df, full_test_df = process_dataset(
                         full_log, length, strategy=strategy, k=k_val
                     )
                     
                     if train_df.empty or test_df.empty:
-                        print(f"    ⚠ Skipping - Empty DataFrame")
+                        print(f"Skipping - Empty DataFrame")
                         continue
                     
                     print(f"    Data: train={len(train_df)}, test={len(test_df)}")
                     
-                    # Get max sequence length for reshaping
-                    max_seq_len = max(len(trace) for trace in train_df['subtrace'])
-                    
-                    # PRE-TRAIN MODELS
+                    # PRE-TRAIN MODELS (same as before)
                     d2v_model = None
                     d2v_le = None
                     if 'D2V' in METHODS:
@@ -140,12 +144,11 @@ if __name__ == "__main__":
                         print(f"    → Method: {method}")
                         
                         try:
-                            # 2. ENCODING (using original encoders)
+                            # 2. ENCODING
                             if method == 'Baseline':
                                 X_train, X_test = baseline.prepare_data_for_prediction(train_df, test_df)
                                 y_train = train_df['next_activity'].values
                                 y_test = test_df['next_activity'].values
-                                
                             elif method == 'OHE':
                                 X_train, X_test = one_hot_encoding.prepare_data_for_prediction(train_df, test_df)
                                 y_train = train_df['next_activity'].values
@@ -182,55 +185,29 @@ if __name__ == "__main__":
                                 X_train, X_test, y_train, y_test = acf.prepare_acf_features(
                                     acf_embeddings, train_df, test_df
                                 )
-                            
-                            print(f"      Original encoding shape: X_train={X_train.shape}, X_test={X_test.shape}")
-                            
-                            # 3. ADAPT FOR LSTM (this is the key new step!)
-                            X_train_lstm, X_test_lstm, y_train, y_test, input_dim, use_embedding = \
-                                adapt_encoding_for_lstm(
-                                    method, X_train, X_test, y_train, y_test,
-                                    train_df=train_df,
-                                    test_df=test_df,
-                                    n_positions=max_seq_len,
-                                    w2v_model=w2v_model if method == 'W2V' else None
-                                )
-                            
-                            print(f"      LSTM-ready shape: X_train={X_train_lstm.shape}, X_test={X_test_lstm.shape}")
-                            print(f"      Input dimension: {input_dim}, Use embedding: {use_embedding}")
-                            
-                            # 4. TRAINING WITH LSTM
+
+                            # 3. TRAINING WITH GRID SEARCH
                             if USE_GRID_SEARCH:
-                                # Grid search (slower but finds best params)
-                                # Note: Grid search function would need to be updated to handle use_embedding
-                                print("      ⚠ Grid search with adapted encodings not fully implemented")
-                                print("      Using simple training instead...")
-                                USE_GRID_SEARCH = False
-                            
-                            if not USE_GRID_SEARCH:
-                                # Simple training with default parameters
-                                accuracy, f1, lstm_model, history, train_time = train_evaluate_lstm(
-                                    X_train_lstm, X_test_lstm, y_train, y_test,
-                                    vocab_size=input_dim,
-                                    lstm_units=100,
-                                    lstm_layers=2,
-                                    dropout=0.2,
-                                    learning_rate=0.002,
-                                    batch_size=64,
-                                    epochs=50,
-                                    patience=5,
-                                    verbose=0,
-                                    use_embedding=use_embedding
+                                accuracy, f1, lgbm, best_params, grid_time = train_evaluate_lgbm_grid_search(
+                                    X_train, X_test, y_train, y_test,
+                                    param_grid=LGBM_PARAM_GRID,
+                                    cv=GRID_SEARCH_CV,
+                                    scoring=GRID_SEARCH_SCORING
+                                )
+                            else:
+                                accuracy, f1, lgbm = train_evaluate_lgbm_simple(
+                                    X_train, X_test, y_train, y_test
                                 )
                                 best_params = {}
-                                grid_time = train_time
+                                grid_time = 0
                             
-                            # Format strategy name
                             if strategy == 'last_k':
                                 strat = 'last' + str(k_val)
                             else:
                                 strat = strategy
 
-                            # 5. LOGGING
+
+                            # 4. LOGGING
                             result = {
                                 'dataset': dataset_path,
                                 'strategy': strat,
@@ -240,44 +217,28 @@ if __name__ == "__main__":
                                 'f1_score': f1,
                                 'train_size': len(train_df),
                                 'test_size': len(test_df),
-                                'input_dim': input_dim,
-                                'use_embedding': use_embedding,
-                                'lstm_input_shape': str(X_train_lstm.shape),
                                 'status': 'Success'
                             }
                             
-                            # Add training time
-                            result['train_time'] = grid_time
-                            
-                            # Add best parameters if grid search was used
-                            if USE_GRID_SEARCH and best_params:
+                            # Add best parameters to result if grid search was used
+                            if USE_GRID_SEARCH:
+                                result['grid_search_time'] = grid_time
                                 for param_name, param_value in best_params.items():
-                                    result[f'lstm_{param_name}'] = param_value
+                                    result[f'lgbm_{param_name}'] = param_value
                             
                             log_result(result)
 
                         except Exception as e:
                             print(f"      ✗ ERROR in {method}: {str(e)}")
-                            traceback.print_exc()
-                            
-                            # Format strategy name for error logging
-                            if strategy == 'last_k':
-                                strat = 'last' + str(k_val)
-                            else:
-                                strat = strategy
-                            
                             result = {
                                 'dataset': dataset_path,
-                                'strategy': strat,
+                                'strategy': strategy,
                                 'length_or_k': length,
                                 'method': method,
                                 'accuracy': None,
                                 'f1_score': None,
-                                'train_size': len(train_df) if 'train_df' in locals() else 0,
-                                'test_size': len(test_df) if 'test_df' in locals() else 0,
-                                'input_dim': None,
-                                'use_embedding': None,
-                                'lstm_input_shape': None,
+                                'train_size': len(train_df),
+                                'test_size': len(test_df),
                                 'status': f"Error: {str(e)[:100]}"
                             }
                             log_result(result)
@@ -287,6 +248,18 @@ if __name__ == "__main__":
                     traceback.print_exc()
 
     print("\n" + "="*80)
-    print("LSTM EXPERIMENT COMPLETE (ALL ENCODINGS)")
+    print("EXPERIMENT COMPLETE")
     print(f"Results saved to: {RESULTS_FILE}")
     print("="*80)
+'''
+## Key features:
+
+1. ✅ **Grid search integration**: Uses `GridSearchCV` for hyperparameter tuning
+2. ✅ **Configurable**: Toggle grid search on/off with `USE_GRID_SEARCH`
+3. ✅ **Logs best params**: Saves best lgbm parameters to CSV
+4. ✅ **Cross-validation**: Uses CV to find best parameters
+5. ✅ **Backward compatible**: Can still run simple training if needed
+
+## Your CSV will now include columns like:
+'''
+# dataset, strategy, length_or_k, method, accuracy, f1_score, grid_search_time, rf_n_estimators, rf_max_depth, rf_min_samples_split, ...
