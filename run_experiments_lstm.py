@@ -16,14 +16,14 @@ from modules.lstm_trainer import (
 from modules.lstm_data_adapter import adapt_encoding_for_lstm
 
 # --- CONFIGURATION ---
-DATASETS = ["datasets/BPI_Challenge_2013_incidents.xes"]
-#PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000]
-PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
+DATASETS = ["datasets/BPI_Challenge_2017.xes"]
+PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000]
+#PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
 K_VALUES = [3, 5, 10, 20]
 # Test all methods with LSTM!
 METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
 
-STRATEGIES = ['prefix']
+STRATEGIES = ['last_k']
 
 # Grid search configuration
 USE_GRID_SEARCH = False  # Set to True for hyperparameter tuning (much slower)

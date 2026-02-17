@@ -15,12 +15,12 @@ DATASETS = ["datasets/BPI_Challenge_2017.xes"]
 PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000]
 #PREFIX_LENGHTS = [100, 150, 200, 300, 400, 500, 600, 700, 800]
 K_VALUES = [3, 5, 10, 20]
-#METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
-METHODS = ['Baseline'] 
+METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
+#METHODS = ['Baseline'] 
 
 
 #STRATEGIES = ['prefix', 'sliding_window', 'last_k']
-STRATEGIES = ['prefix', 'sliding_window','last_k']
+STRATEGIES = ['last_k']
 
 
 # Grid search configuration
