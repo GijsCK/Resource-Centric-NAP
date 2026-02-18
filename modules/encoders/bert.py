@@ -107,8 +107,11 @@ def pretrain_bert(full_traces, vocab, epochs=5, batch_size=32, max_len=150,
     Returns:
     - Trained BERT encoder (BertModel, not BertForMaskedLM)
     """
+    device = torch.device('cuda'if torch.cuda.is_available() else 'cpu')
+    print(f"Training on: {device}")
+    
     config = create_bert_config(len(vocab), hidden_size, num_layers, num_heads)
-    model = BertForMaskedLM(config)
+    model = BertForMaskedLM(config).to(device)
     model.train()
     
     optimizer = AdamW(model.parameters(), lr=lr)
@@ -120,10 +123,12 @@ def pretrain_bert(full_traces, vocab, epochs=5, batch_size=32, max_len=150,
     for epoch in range(epochs):
         total_loss = 0
         for input_ids, attention_mask in loader:
+            input_ids = input_ids.to(device)
+            attention_mask = attention_mask.to(device)
             labels = input_ids.clone()
             
             # Mask 15% of tokens (excluding special tokens)
-            rand = torch.rand(input_ids.shape)
+            rand = torch.rand(input_ids.shape, device=device)
             mask_arr = (rand < 0.15) & (input_ids > 4)
             input_ids[mask_arr] = vocab['[MASK]']
             
@@ -157,6 +162,9 @@ def bert_embed_data(bert_encoder, df, vocab, max_len=150, batch_size=32):
     - X: Embedding matrix (n_samples, hidden_size)
     - y: Target labels (next_activity values)
     """
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    bert_encoder = bert_encoder.to(device)
+
     bert_encoder.eval()
     embeddings = []
     
@@ -173,15 +181,15 @@ def bert_embed_data(bert_encoder, df, vocab, max_len=150, batch_size=32):
                 batch_attention_mask.append(attention_mask)
             
             # Stack into batches
-            batch_input_ids = torch.stack(batch_input_ids)
-            batch_attention_mask = torch.stack(batch_attention_mask)
+            batch_input_ids = torch.stack(batch_input_ids).to(device)
+            batch_attention_mask = torch.stack(batch_attention_mask).to(device)
             
             outputs = bert_encoder(batch_input_ids, attention_mask=batch_attention_mask)
             
             # Extract embedding from last real token position for each sequence
             for j in range(len(batch_df)):
                 last_real_idx = batch_attention_mask[j].sum() - 1
-                emb = outputs.last_hidden_state[j, last_real_idx, :].numpy()
+                emb = outputs.last_hidden_state[j, last_real_idx, :].cpu().numpy()
                 embeddings.append(emb)
     
     X = np.array(embeddings)

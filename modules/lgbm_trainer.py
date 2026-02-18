@@ -6,26 +6,32 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.preprocessing import LabelEncoder
 
+import warnings
+
+warnings.filterwarnings("ignore", message="X does not have valid feature names")
+
 # ============================================================================
 # CONFIGURATION: LIGHTGBM PARAMETER GRID
 # ============================================================================
 
 # LightGBM typically requires tuning 'num_leaves' and 'learning_rate'
 LGBM_PARAM_GRID = {
-    'n_estimators': [100, 200],
-    'learning_rate': [0.01, 0.1],
-    'num_leaves': [31, 63],          # Key parameter for LightGBM complexity
-    'max_depth': [-1, 10, 20],       # -1 means no limit
-    'min_child_samples': [20, 50],   # Similar to min_samples_leaf
+    'n_estimators': [50, 100, 200],
+    'max_depth' : [-1, 10, 20],
+    'learning_rate': [0.05, 0.1],
+    'subsample': [0.8, 1.0],
     'colsample_bytree': [0.8, 1.0]   # Similar to max_features
 }
 
 # Base parameters
 LGBM_BASE_PARAMS = {
     'random_state': 42,
-    'n_jobs': -1,
+    'n_jobs': 1,
     'verbose': -1,             # Suppress warnings
-    'objective': 'multiclass'  # Force multiclass for activity prediction
+    'objective': 'multiclass',  # Force multiclass for activity prediction
+    'device' : 'gpu',
+    'gpu_platform_id' : 0,
+    'gpu_device_id' : 0
 }
 
 # ============================================================================

@@ -2,9 +2,18 @@ import numpy as np
 from gensim.models import Word2Vec
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
+import ast
+
 
 # Train word2vec
 def train_word2vec_model(train_df, vector_size=16, window=5, min_count=1, sg=1):
+
+    sentences = train_df['subtrace'].tolist()
+    
+    if isinstance(sentences[0], str):
+        # Stored as string representation of a list, parse it
+        sentences = [ast.literal_eval(s) if isinstance(s, str) else s for s in sentences]
+
     model = Word2Vec(
         sentences=train_df['subtrace'],
         vector_size=vector_size,

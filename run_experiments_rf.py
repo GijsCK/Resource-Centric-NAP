@@ -1,4 +1,5 @@
 import pandas as pd
+import gc
 import traceback
 import os
 from modules.data_loader import process_dataset, import_xes
@@ -10,17 +11,18 @@ from modules.rf_trainer import (
 )
 
 # --- CONFIGURATION ---
-DATASETS = ["datasets/BPI_Challenge_2017.xes"]
+DATASETS = ["datasets/BPI_Challenge_2019.xes"]
 #PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
-PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000]
-#PREFIX_LENGHTS = [100, 150, 200, 300, 400, 500, 600, 700, 800]
+#PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000]
+#PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000, 2500]
+PREFIX_LENGTHS = [100, 150, 200, 300, 400, 500, 600, 700, 800]
 K_VALUES = [3, 5, 10, 20]
 METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
 #METHODS = ['Baseline'] 
 
 
 #STRATEGIES = ['prefix', 'sliding_window', 'last_k']
-STRATEGIES = ['last_k']
+STRATEGIES = ['prefix', 'last_k']
 
 
 # Grid search configuration
@@ -28,7 +30,7 @@ USE_GRID_SEARCH = True
 GRID_SEARCH_CV = 3   
 GRID_SEARCH_SCORING = 'accuracy' 
 
-RESULTS_FILE = "results/experiment_results_2017.csv"
+RESULTS_FILE = "results/experiment_results_2019_rf.csv"
 os.makedirs("results", exist_ok=True)
 
 print("Configuration loaded")
@@ -241,6 +243,13 @@ if __name__ == "__main__":
                                 'status': f"Error: {str(e)[:100]}"
                             }
                             log_result(result)
+                        try:
+                            # After a method is done and results are logged:
+                            # (Add this at the end of the method loop)
+                            del X_train, X_test
+                            gc.collect() 
+                        except:
+                            pass
 
                 except Exception as e:
                     print(f"    ✗ CRITICAL ERROR processing length {length}: {e}")

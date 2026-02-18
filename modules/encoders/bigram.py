@@ -24,7 +24,7 @@ def create_bigram_features(df_train, df_test):
             row = [counts[t] for t in all_transitions]
             bigram_rows.append(row)
             
-        return pd.DataFrame(bigram_rows, columns=all_transitions, index=df.index)
+        return pd.DataFrame(bigram_rows, columns=all_transitions, index=df.index, dtype='uint16')
 
     X_train_bigram = _extract_counts(df_train)
     X_test_bigram = _extract_counts(df_test)

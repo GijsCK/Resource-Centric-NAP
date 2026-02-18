@@ -19,7 +19,7 @@ def ohe_data(train_df, test_df, feature_cols):
     - X_train, X_test: Encoded feature matrices
     - encoder: Fitted OneHotEncoder object
     """
-    encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+    encoder = OneHotEncoder(sparse_output=True, handle_unknown='ignore')
     
     # Fit on training data
     encoder.fit(train_df[feature_cols])

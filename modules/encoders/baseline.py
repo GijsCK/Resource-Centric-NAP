@@ -38,8 +38,8 @@ def label_encode_data(train_df, test_df, feature_cols):
         X_test[col] = X_test[col].fillna(-1).astype(int)
     
     # Convert to numpy arrays
-    X_train = X_train.astype(int).values
-    X_test = X_test.values
+    X_train = X_train.astype(np.int16).values
+    X_test = X_test.astype(np.int16).values
     
     return X_train, X_test, label_maps
 

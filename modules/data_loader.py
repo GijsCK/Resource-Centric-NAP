@@ -1,13 +1,14 @@
 import pandas as pd
 import pm4py
 from sklearn.model_selection import train_test_split
+import gc
 
 
 
 # Importing dataset from file path
 def import_xes(file_path):
-    log = pm4py.read_xes(file_path)
-    return pm4py.convert_to_dataframe(log)
+    df = pm4py.read_xes(file_path, return_legacy_log_object=False)
+    return df
 
 # Cleaning dataset: removing unnecessary columns, shifting to resource focus
 def clean_dataset(df):
