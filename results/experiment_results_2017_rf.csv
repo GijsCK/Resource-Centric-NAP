@@ -637,3 +637,9 @@ datasets/BPI_Challenge_2017.xes,last20,2000,W2V,0.4444444444444444,0.45238095238
 datasets/BPI_Challenge_2017.xes,last20,2000,D2V,0.3333333333333333,0.2824074074074074,86,18,Success,4.777690887451172,10,sqrt,1,2,200
 datasets/BPI_Challenge_2017.xes,last20,2000,BERT,0.5555555555555556,0.585016835016835,86,18,Success,4.413625001907349,10,log2,2,5,100
 datasets/BPI_Challenge_2017.xes,last20,2000,ACF,0.2222222222222222,0.25502645502645505,86,18,Success,4.549216032028198,10,log2,2,2,100
+datasets/BPI_Challenge_2017.xes,sliding_window,100,Baseline,,,1003019,184911,Error: A task has failed to un-serialize. Please ensure that the arguments of the function are all picklabl
+datasets/BPI_Challenge_2017.xes,sliding_window,150,Baseline,,,997207,183738,"Error: Unable to allocate 190. MiB for an array with shape (664804, 150) and data type int16"
+datasets/BPI_Challenge_2017.xes,sliding_window,200,Baseline,,,991407,182638,"Error: Unable to allocate 252. MiB for an array with shape (660938, 200) and data type int16"
+datasets/BPI_Challenge_2017.xes,sliding_window,400,Baseline,,,968665,178238,"Error: Unable to allocate 493. MiB for an array with shape (645777, 400) and data type int16"
+datasets/BPI_Challenge_2017.xes,sliding_window,600,Baseline,,,946295,173997,"Error: Unable to allocate 4.23 GiB for an array with shape (946295, 600) and data type object"
+datasets/BPI_Challenge_2017.xes,sliding_window,800,Baseline,,,924651,169797,"Error: Unable to allocate 5.51 GiB for an array with shape (800, 924651) and data type object"

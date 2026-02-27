@@ -1,3 +1,0 @@
-dataset,strategy,length_or_k,method,accuracy,f1_score,train_size,test_size,status
-datasets/BPI_Challenge_2017.xes,sliding_window,100,Baseline,,,1003019,184911,"Error: Unable to allocate 255. MiB for an array with shape (334339, 100) and data type int64"
-datasets/BPI_Challenge_2017.xes,sliding_window,100,Baseline,,,1003019,184911,"Error: Unable to allocate 255. MiB for an array with shape (334340, 100) and data type int64"

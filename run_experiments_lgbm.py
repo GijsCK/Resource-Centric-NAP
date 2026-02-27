@@ -1,6 +1,7 @@
 import pandas as pd
 import traceback
 import os
+import itertools
 from modules.data_loader import process_dataset, import_xes
 from modules.encoders import baseline, one_hot_encoding, bigram, word2vec, doc2vec, bert, acf
 from modules.lgbm_trainer import (
@@ -11,17 +12,19 @@ from modules.lgbm_trainer import (
 
 
 # --- CONFIGURATION ---
-DATASETS = ["datasets/BPI_Challenge_2013_incidents.xes"]
-PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
-#PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000]
-#PREFIX_LENGHTS = [100, 150, 200, 300, 400, 500, 600, 700, 800]
+DATASETS = ["datasets/BPI_Challenge_2017.xes"]
+#PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
+#PREFIX_LENGTHS = [150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000] #EN 100 VOOR ALLE LASTK
+#PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000, 2500]
+#PREFIX_LENGTHS = [100, 150, 200, 300, 400, 500, 600, 700, 800]
+PREFIX_LENGTHS = [100]
 K_VALUES = [3, 5, 10, 20]
 METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
-#METHODS = ['Baseline'] 
+#METHODS = ['ACF'] 
 
 
 #STRATEGIES = ['prefix', 'sliding_window', 'last_k']
-STRATEGIES = ['prefix']
+STRATEGIES = ['last_k']
 
 
 # Grid search configuration
@@ -29,13 +32,12 @@ USE_GRID_SEARCH = True
 GRID_SEARCH_CV = 3   
 GRID_SEARCH_SCORING = 'accuracy' 
 
-RESULTS_FILE = "results/experiment_results_2013_lgbm.csv"
+RESULTS_FILE = "results/experiment_results_2017_lgbm.csv"
 os.makedirs("results", exist_ok=True)
 
 print("Configuration loaded")
 print(f"Grid Search: {'ENABLED' if USE_GRID_SEARCH else 'DISABLED'}")
 if USE_GRID_SEARCH:
-    import itertools
     n_combinations = len(list(itertools.product(*LGBM_PARAM_GRID.values())))
     print(f"Testing {n_combinations} parameter combinations per experiment")
 
@@ -45,7 +47,11 @@ def log_result(result_dict):
     df = pd.DataFrame([result_dict])
     header = not os.path.exists(RESULTS_FILE)
     df.to_csv(RESULTS_FILE, mode='a', header=header, index=False)
-    print(f"✓ Saved: {result_dict['method']} - Acc: {result_dict.get('accuracy', 'N/A'):.4f}")
+    
+    acc = result_dict.get('accuracy')
+    acc_str = f"{acc:.4f}" if acc is not None else "N/A (Failed)"
+    
+    print(f"✓ Saved: {result_dict['method']} - Acc: {acc_str}")
 
 
 if __name__ == "__main__":
@@ -232,7 +238,7 @@ if __name__ == "__main__":
                             print(f"      ✗ ERROR in {method}: {str(e)}")
                             result = {
                                 'dataset': dataset_path,
-                                'strategy': strategy,
+                                'strategy': strat,
                                 'length_or_k': length,
                                 'method': method,
                                 'accuracy': None,
