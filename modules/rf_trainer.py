@@ -22,7 +22,7 @@ RF_PARAM_GRID = {
 
 # Base parameters (not part of grid search)
 RF_BASE_PARAMS = {
-    'random_state': 42,
+    'random_state': 1,
     'n_jobs': -1
 }
 

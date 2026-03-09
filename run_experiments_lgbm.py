@@ -2,6 +2,7 @@ import pandas as pd
 import traceback
 import os
 import itertools
+import gc
 from modules.data_loader import process_dataset, import_xes
 from modules.encoders import baseline, one_hot_encoding, bigram, word2vec, doc2vec, bert, acf
 from modules.lgbm_trainer import (
@@ -12,27 +13,31 @@ from modules.lgbm_trainer import (
 
 
 # --- CONFIGURATION ---
-DATASETS = ["datasets/BPI_Challenge_2017.xes"]
+DATASETS = ["datasets/BPI_Challenge_2018.xes"]
 #PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
-#PREFIX_LENGTHS = [150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000] #EN 100 VOOR ALLE LASTK
+#PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000] 
 #PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000, 2500]
 #PREFIX_LENGTHS = [100, 150, 200, 300, 400, 500, 600, 700, 800]
 PREFIX_LENGTHS = [100]
-K_VALUES = [3, 5, 10, 20]
-METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
-#METHODS = ['ACF'] 
+#K_VALUES = [3, 5, 10, 20]
+K_VALUES = [10, 20]
+
+#METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT']
+METHODS = ['ACF'] 
+#METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT']
+
+# missen: 100 ACF voor last10 en last20
 
 
 #STRATEGIES = ['prefix', 'sliding_window', 'last_k']
-STRATEGIES = ['last_k']
-
+STRATEGIES = ['last_k'] # MOET NOG LENGTH 100 VOOR last 10 en 20
 
 # Grid search configuration
 USE_GRID_SEARCH = True 
 GRID_SEARCH_CV = 3   
 GRID_SEARCH_SCORING = 'accuracy' 
 
-RESULTS_FILE = "results/experiment_results_2017_lgbm.csv"
+RESULTS_FILE = "results/experiment_results_2018_lgbm.csv"
 os.makedirs("results", exist_ok=True)
 
 print("Configuration loaded")
@@ -64,6 +69,7 @@ if __name__ == "__main__":
         
         try:
             full_log = import_xes(dataset_path)
+            gc.collect()
             print(f"Loaded {len(full_log)} traces")
         except Exception as e:
             print(f"CRITICAL: Failed to load dataset: {e}")
@@ -257,15 +263,3 @@ if __name__ == "__main__":
     print("EXPERIMENT COMPLETE")
     print(f"Results saved to: {RESULTS_FILE}")
     print("="*80)
-'''
-## Key features:
-
-1. ✅ **Grid search integration**: Uses `GridSearchCV` for hyperparameter tuning
-2. ✅ **Configurable**: Toggle grid search on/off with `USE_GRID_SEARCH`
-3. ✅ **Logs best params**: Saves best lgbm parameters to CSV
-4. ✅ **Cross-validation**: Uses CV to find best parameters
-5. ✅ **Backward compatible**: Can still run simple training if needed
-
-## Your CSV will now include columns like:
-'''
-# dataset, strategy, length_or_k, method, accuracy, f1_score, grid_search_time, rf_n_estimators, rf_max_depth, rf_min_samples_split, ...

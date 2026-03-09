@@ -9,7 +9,7 @@ def build_alphabet_from_log(train_log):
     
     Parameters:
     - train_log: List of lists (activity sequences)
-    
+    ,
     Returns:
     - alphabet: Set of unique activities
     """

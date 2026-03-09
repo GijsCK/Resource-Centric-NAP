@@ -26,7 +26,7 @@ LGBM_PARAM_GRID = {
 
 # Base parameters
 LGBM_BASE_PARAMS = {
-    'random_state': 42,
+    'random_state': 1,
     'n_jobs': 1,
     'verbose': -1,             # Suppress warnings
     'objective': 'multiclass',  # Force multiclass for activity prediction

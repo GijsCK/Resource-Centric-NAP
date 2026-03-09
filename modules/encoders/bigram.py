@@ -2,35 +2,6 @@ import pandas as pd
 from collections import defaultdict
 
 
-def create_bigram_features(df_train, df_test):
-
-    # all activities in the train set
-    train_activities = set([act for prefix in df_train['subtrace'] for act in prefix])
-    unique_activities = sorted(list(train_activities))
-
-    # all possible bigram transitions
-    all_transitions = [f"{a}->{b}" for a in unique_activities for b in unique_activities]
-
-
-    def _extract_counts(df):
-        bigram_rows = []
-        for prefix in df['subtrace']:
-            counts = defaultdict(int)
-            
-            for i in range(len(prefix) - 1):
-                key = f"{prefix[i]}->{prefix[i+1]}"
-                counts[key] += 1
-            
-            row = [counts[t] for t in all_transitions]
-            bigram_rows.append(row)
-            
-        return pd.DataFrame(bigram_rows, columns=all_transitions, index=df.index, dtype='uint16')
-
-    X_train_bigram = _extract_counts(df_train)
-    X_test_bigram = _extract_counts(df_test)
-    
-    return X_train_bigram, X_test_bigram
-
 
 def create_bigram_features_sparse(df_train, df_test, include_start=False):
     """

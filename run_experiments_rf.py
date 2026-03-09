@@ -17,12 +17,12 @@ PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000]
 #PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000, 2500]
 #PREFIX_LENGTHS = [100, 150, 200, 300, 400, 500, 600, 700, 800]
 K_VALUES = [3, 5, 10, 20]
-METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
-#METHODS = ['Baseline'] 
+#METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
+METHODS = ['Baseline'] # BASELINE OP ALLE LENGTES VOOR 2017 MOET NOG!!!
 
 
 #STRATEGIES = ['prefix', 'sliding_window', 'last_k']
-STRATEGIES = ['sliding_window']
+STRATEGIES = ['prefix']
 
 
 # Grid search configuration

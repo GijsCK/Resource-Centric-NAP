@@ -7,7 +7,24 @@ import gc
 
 # Importing dataset from file path
 def import_xes(file_path):
-    df = pm4py.read_xes(file_path, return_legacy_log_object=False)
+    from pm4py.objects.log.importer.xes import importer as xes_importer
+    
+    variant = xes_importer.Variants.ITERPARSE
+    log = xes_importer.apply(file_path, variant=variant)
+    
+    # Manually extract only the 4 fields you need, row by row
+    rows = []
+    for trace in log:
+        case_id = trace.attributes.get('concept:name', None)
+        for event in trace:
+            rows.append({
+                'case:concept:name': case_id,
+                'concept:name':      event.get('concept:name', None),
+                'org:resource':      event.get('org:resource', None),
+                'time:timestamp':    event.get('time:timestamp', None),
+            })
+    
+    df = pd.DataFrame(rows)
     return df
 
 # Cleaning dataset: removing unnecessary columns, shifting to resource focus

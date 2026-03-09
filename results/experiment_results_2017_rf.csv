@@ -637,9 +637,14 @@ datasets/BPI_Challenge_2017.xes,last20,2000,W2V,0.4444444444444444,0.45238095238
 datasets/BPI_Challenge_2017.xes,last20,2000,D2V,0.3333333333333333,0.2824074074074074,86,18,Success,4.777690887451172,10,sqrt,1,2,200
 datasets/BPI_Challenge_2017.xes,last20,2000,BERT,0.5555555555555556,0.585016835016835,86,18,Success,4.413625001907349,10,log2,2,5,100
 datasets/BPI_Challenge_2017.xes,last20,2000,ACF,0.2222222222222222,0.25502645502645505,86,18,Success,4.549216032028198,10,log2,2,2,100
-datasets/BPI_Challenge_2017.xes,sliding_window,100,Baseline,,,1003019,184911,Error: A task has failed to un-serialize. Please ensure that the arguments of the function are all picklabl
-datasets/BPI_Challenge_2017.xes,sliding_window,150,Baseline,,,997207,183738,"Error: Unable to allocate 190. MiB for an array with shape (664804, 150) and data type int16"
-datasets/BPI_Challenge_2017.xes,sliding_window,200,Baseline,,,991407,182638,"Error: Unable to allocate 252. MiB for an array with shape (660938, 200) and data type int16"
-datasets/BPI_Challenge_2017.xes,sliding_window,400,Baseline,,,968665,178238,"Error: Unable to allocate 493. MiB for an array with shape (645777, 400) and data type int16"
-datasets/BPI_Challenge_2017.xes,sliding_window,600,Baseline,,,946295,173997,"Error: Unable to allocate 4.23 GiB for an array with shape (946295, 600) and data type object"
-datasets/BPI_Challenge_2017.xes,sliding_window,800,Baseline,,,924651,169797,"Error: Unable to allocate 5.51 GiB for an array with shape (800, 924651) and data type object"
+datasets/BPI_Challenge_2017.xes,prefix,100,Baseline,0.4166666666666667,0.40901663695781343,117,24,Success,12.799656391143799,10,sqrt,1,5,100
+datasets/BPI_Challenge_2017.xes,prefix,150,Baseline,0.38095238095238093,0.29591836734693877,116,22,Success,4.581862926483154,10,log2,1,2,200
+datasets/BPI_Challenge_2017.xes,prefix,200,Baseline,0.3333333333333333,0.2492877492877493,116,22,Success,4.441167116165161,20,sqrt,1,2,100
+datasets/BPI_Challenge_2017.xes,prefix,400,Baseline,0.45454545454545453,0.3620823620823621,113,22,Success,4.868456602096558,20,sqrt,1,2,200
+datasets/BPI_Challenge_2017.xes,prefix,600,Baseline,0.35,0.25757575757575757,110,21,Success,4.881375074386597,20,sqrt,1,2,200
+datasets/BPI_Challenge_2017.xes,prefix,800,Baseline,0.45,0.3628571428571429,106,21,Success,5.072679281234741,20,sqrt,2,5,100
+datasets/BPI_Challenge_2017.xes,prefix,1000,Baseline,0.5238095238095238,0.39863945578231297,103,21,Success,4.992101669311523,10,sqrt,2,5,100
+datasets/BPI_Challenge_2017.xes,prefix,1200,Baseline,0.47368421052631576,0.36140350877192984,100,21,Success,4.9035303592681885,10,sqrt,2,2,100
+datasets/BPI_Challenge_2017.xes,prefix,1400,Baseline,0.15,0.09,97,20,Success,6.086792945861816,10,log2,1,2,100
+datasets/BPI_Challenge_2017.xes,prefix,1500,Baseline,0.47058823529411764,0.33939393939393936,94,20,Success,5.589426040649414,20,sqrt,1,5,100
+datasets/BPI_Challenge_2017.xes,prefix,2000,Baseline,0.2777777777777778,0.19607843137254902,86,18,Success,4.943018198013306,20,sqrt,1,2,200
