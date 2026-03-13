@@ -10,6 +10,7 @@ from modules.lgbm_trainer import (
     train_evaluate_lgbm_simple,
     LGBM_PARAM_GRID
 )
+import time
 
 
 # --- CONFIGURATION ---
