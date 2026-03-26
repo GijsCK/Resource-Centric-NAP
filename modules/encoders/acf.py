@@ -5,7 +5,7 @@ from ACF_code import activity_context_frequency, pmi
 
 def build_alphabet_from_log(train_log):
     """
-    Extract unique activities from training log.
+    Extract all unique activities from training log.
     
     Parameters:
     - train_log: List of lists (activity sequences)
@@ -19,7 +19,7 @@ def build_alphabet_from_log(train_log):
 
 def train_acf_embeddings(train_log, alphabet, ngram_size=5, bag_of_words=1, ppmi=1):
     """
-    Generate ACF embeddings with optional PMI post-processing.
+    Generate ACF embeddings with PMI post-processing.
     
     Parameters:
     - train_log: List of lists (activity sequences)
@@ -35,7 +35,7 @@ def train_acf_embeddings(train_log, alphabet, ngram_size=5, bag_of_words=1, ppmi
     """
     print(f"Generating ACF matrices for {len(alphabet)} activities...")
     
-    # Step 1: Generate raw ACF matrix
+    # Generate raw ACF matrix
     dist_mat, acf_embeddings, act_freq, ctx_freq, ctx_idx = \
         activity_context_frequency.get_activity_context_frequency_matrix(
             log=train_log,
@@ -44,7 +44,7 @@ def train_acf_embeddings(train_log, alphabet, ngram_size=5, bag_of_words=1, ppmi
             bag_of_words=bag_of_words
         )
     
-    # Step 2: Apply PMI post-processing
+    # SApply PMI post-processing
     pmi_dist_mat, pmi_embeddings = pmi.get_activity_context_frequency_matrix_pmi(
         embeddings=acf_embeddings,
         activity_freq_dict=act_freq,
@@ -55,14 +55,7 @@ def train_acf_embeddings(train_log, alphabet, ngram_size=5, bag_of_words=1, ppmi
     
     print("ACF embeddings generated successfully")
     
-    # Package metadata for potential debugging
-    metadata = {
-        'activity_freq': act_freq,
-        'context_freq': ctx_freq,
-        'context_index': ctx_idx
-    }
-    
-    return pmi_embeddings, pmi_dist_mat, metadata
+    return pmi_embeddings, pmi_dist_mat
 
 
 def vectorize_sequences(sequences, embeddings, method='average'):

@@ -64,53 +64,14 @@ def prepare_data_for_prediction(train_df, test_df):
     """
     Complete pipeline for preparing next activity prediction data with label encoding.
     """
-    # Step 1: Transform subtraces to columns
+    # Transform subtraces to columns
     train_features = transform_subtrace_to_columns(train_df)
     test_features = transform_subtrace_to_columns(test_df)
     
-    # Step 2: Get list of all position columns
+    # Get list of all position columns
     feature_cols = [col for col in train_features.columns if col.startswith('pos_')]
     
-    # Step 3: Label encode all position columns
+    # Label encode all position columns
     X_train, X_test, _ = label_encode_data(train_features, test_features, feature_cols)
     
     return X_train, X_test
-
-
-def create_global_label_encoding(train_df, test_df):
-    """
-    Alternative approach: Single global label mapping for all activities.
-    All positions share the same encoding scheme.
-    
-    This is more memory efficient and can capture that the same activity
-    at different positions should have similar representations.
-    """
-    # Step 1: Transform subtraces to columns
-    train_features = transform_subtrace_to_columns(train_df)
-    test_features = transform_subtrace_to_columns(test_df)
-    
-    # Get all position columns
-    feature_cols = [col for col in train_features.columns if col.startswith('pos_')]
-    
-    # Step 2: Create global vocabulary from all positions in training data
-    all_activities = set()
-    for col in feature_cols:
-        all_activities.update(train_features[col].unique())
-    
-    # Create single global mapping
-    global_mapping = {val: idx for idx, val in enumerate(sorted(all_activities))}
-    
-    # Step 3: Apply global mapping to all columns
-    X_train = train_features[feature_cols].copy()
-    X_test = test_features[feature_cols].copy()
-    
-    for col in feature_cols:
-        X_train[col] = X_train[col].map(global_mapping)
-        X_test[col] = X_test[col].map(global_mapping)
-        # Handle unknown values
-        X_test[col] = X_test[col].fillna(-1).astype(int)
-    
-    X_train = X_train.astype(int).values
-    X_test = X_test.values
-    
-    return X_train, X_test, global_mapping

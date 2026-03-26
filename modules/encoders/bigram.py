@@ -5,7 +5,7 @@ from collections import defaultdict
 
 def create_bigram_features_sparse(df_train, df_test, include_start=False):
     """
-    More efficient version - only creates features for bigrams seen in training.
+    Efficient Bigram creation fucntion that creates only the bigrams actually observed in training
     """
     
     # Find all bigrams that actually appear in training data

@@ -10,12 +10,6 @@ from sklearn.preprocessing import LabelEncoder
 def prepare_tagged_data_from_series(series):
     """
     Convert a pandas Series of trace lists into TaggedDocument format for Doc2Vec.
-    
-    Parameters:
-    - series: pandas Series where index is resource_id and values are trace lists
-    
-    Returns:
-    - List of TaggedDocument objects
     """
     tagged_docs = []
     for resource_id, trace_list in series.items():
@@ -35,8 +29,6 @@ def train_doc2vec_model(tagged_documents, vector_size=64, window=5, min_count=1,
     - workers: Number of parallel workers
     - epochs: Number of training epochs
     
-    Returns:
-    - Trained Doc2Vec model
     """
     model = Doc2Vec(
         vector_size=vector_size,
@@ -92,7 +84,7 @@ def fit_label_encoder(train_df, test_df):
 
 def prepare_doc2vec_features(doc2vec_model, train_df, test_df, label_encoder, infer_epochs=50):
     """
-    Complete pipeline: embed data and encode labels.
+    Combining full doc2vec pipeline into 1 calleable function
     
     Parameters:
     - doc2vec_model: Trained Doc2Vec model

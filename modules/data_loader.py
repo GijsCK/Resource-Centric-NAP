@@ -12,7 +12,7 @@ def import_xes(file_path):
     variant = xes_importer.Variants.ITERPARSE
     log = xes_importer.apply(file_path, variant=variant)
     
-    # Manually extract only the 4 fields you need, row by row
+    # Manually extract only the 4 needed, to combat memory restrictions
     rows = []
     for trace in log:
         case_id = trace.attributes.get('concept:name', None)

@@ -7,11 +7,6 @@ from sklearn.preprocessing import LabelEncoder
 import time
 import itertools
 
-
-# ============================================================================
-# CONFIGURATION: RF PARAMETER GRID
-# ============================================================================
-
 RF_PARAM_GRID = {
     'n_estimators': [100, 200],
     'max_depth': [10, 20, None],
@@ -26,10 +21,6 @@ RF_BASE_PARAMS = {
     'n_jobs': -1
 }
 
-
-# ============================================================================
-# TRAINING FUNCTIONS
-# ============================================================================
 
 def train_evaluate_rf_grid_search(X_train, X_test, y_train, y_test, 
                                    param_grid=None, cv=3, scoring='f1_weighted'):
@@ -64,7 +55,7 @@ def train_evaluate_rf_grid_search(X_train, X_test, y_train, y_test,
         n_unseen = (~seen_mask).sum()
         
         if n_unseen > 0:
-            print(f"      ⚠ Filtering {n_unseen}/{len(y_test)} test samples with unseen labels")
+            print(f"Filtering {n_unseen}/{len(y_test)} test samples with unseen labels")
             
             # Filter test set
             X_test = X_test[seen_mask]
@@ -80,11 +71,10 @@ def train_evaluate_rf_grid_search(X_train, X_test, y_train, y_test,
         y_train_encoded = y_train
         y_test_encoded = y_test
     
-    # Create base estimator
     rf_base = RandomForestClassifier(**RF_BASE_PARAMS)
     
     # Grid search
-    print(f"      Running grid search with {len(list(itertools.product(*param_grid.values())))} combinations...")
+    print(f"Running grid search with {len(list(itertools.product(*param_grid.values())))} combinations")
     
     start_time = time.time()
     grid_search = GridSearchCV(
@@ -147,7 +137,7 @@ def train_evaluate_rf_simple(X_train, X_test, y_train, y_test, rf_params=None):
         n_unseen = (~seen_mask).sum()
         
         if n_unseen > 0:
-            print(f"      ⚠ Filtering {n_unseen}/{len(y_test)} test samples with unseen labels")
+            print(f"Filtering {n_unseen}/{len(y_test)} test samples with unseen labels")
             X_test = X_test[seen_mask]
             y_test = y_test[seen_mask]
             
@@ -174,10 +164,7 @@ def train_evaluate_rf_simple(X_train, X_test, y_train, y_test, rf_params=None):
     
     return accuracy, f1score, rf
 
-
-# ============================================================================
-# UTILITY: Generate parameter combinations for manual grid search
-# ============================================================================
+# Utility functions
 
 def generate_param_combinations(param_grid):
     """
@@ -195,11 +182,10 @@ def generate_param_combinations(param_grid):
     return combinations
 
 
-# For backward compatibility with your existing code
 def train_evaluate_rf(X_train, X_test, y_train, y_test, 
                       use_grid_search=True, **kwargs):
     """
-    Wrapper function that chooses between grid search and simple training.
+    Wrapper function that chooses between grid search and simple training, in thesis only grid search is used.
     
     Parameters:
     - use_grid_search: If True, use GridSearchCV; if False, use simple training

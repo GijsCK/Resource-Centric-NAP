@@ -8,7 +8,6 @@ import gc
 from modules.data_loader import process_dataset, import_xes
 from modules.encoders import baseline, one_hot_encoding, bigram, word2vec, doc2vec, bert, acf
 
-# --- CONFIGURATION (match your original experiment) ---
 DATASETS = ["datasets/BPI_Challenge_2013_Incidents.xes"]
 PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150] 
 #PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000] 
@@ -17,7 +16,7 @@ PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
 
 
 K_VALUES = [3,5,10, 20]
-METHODS = [ 'W2V']
+METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF']
 STRATEGIES = ['last_k','prefix']
 
 COMPLEXITY_FILE = "results/encoding_complexity_TEST.csv"
@@ -68,14 +67,13 @@ if __name__ == "__main__":
                         full_log, length, strategy=strategy, k=k_val
                     )
                     if train_df.empty or test_df.empty:
-                        print("  Skipping - empty DataFrame")
+                        print("Skipping - empty DataFrame")
                         continue
 
                     n_train_traces = len(train_df)
                     n_test_traces = len(test_df)
                     strat = ('last' + str(k_val)) if strategy == 'last_k' else strategy
 
-                    # --- PRE-TRAINING (timed separately) ---
                     pretrain_times = {m: None for m in METHODS}
 
                     if 'W2V' in METHODS:
@@ -102,12 +100,11 @@ if __name__ == "__main__":
                     if 'ACF' in METHODS:
                         t0 = time.time()
                         acf_alphabet = acf.build_alphabet_from_log(full_train_df)
-                        acf_embeddings, dist_mat, metadata = acf.train_acf_embeddings(
+                        acf_embeddings, dist_mat = acf.train_acf_embeddings(
                             full_train_df, acf_alphabet
                         )
                         pretrain_times['ACF'] = time.time() - t0
 
-                    # --- ENCODING (timed per method) ---
                     for method in METHODS:
                         print(f"    → {method}")
                         try:
@@ -155,7 +152,7 @@ if __name__ == "__main__":
                             traceback.print_exc()
 
                 except Exception as e:
-                    print(f"  ✗ CRITICAL ERROR at length {length}: {e}")
+                    print(f"CRITICAL ERROR at length {length}: {e}")
                     traceback.print_exc()
 
-    print(f"\nDone. Results saved to {COMPLEXITY_FILE}")
+    print(f"Done. Results saved to {COMPLEXITY_FILE}")

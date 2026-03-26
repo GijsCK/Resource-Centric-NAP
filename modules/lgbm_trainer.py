@@ -11,33 +11,25 @@ import warnings
 
 warnings.filterwarnings("ignore", message="X does not have valid feature names")
 
-# ============================================================================
-# CONFIGURATION: LIGHTGBM PARAMETER GRID
-# ============================================================================
-
-# LightGBM typically requires tuning 'num_leaves' and 'learning_rate'
 LGBM_PARAM_GRID = {
     'n_estimators': [50, 100, 200],
     'max_depth' : [-1],
     'learning_rate': [0.05, 0.1],
     'subsample': [0.8],
-    'colsample_bytree': [0.8, 1.0]   # Similar to max_features
+    'colsample_bytree': [0.8, 1.0]   
 }
 
 # Base parameters
 LGBM_BASE_PARAMS = {
     'random_state': 1,
     'n_jobs': 1,
-    'verbose': -1,             # Suppress warnings
-    'objective': 'multiclass',  # Force multiclass for activity prediction
+    'verbose': -1,    
+    'objective': 'multiclass',  # multiclass for activity prediction
     'device' : 'gpu',
     'gpu_platform_id' : 0,
     'gpu_device_id' : 0
 }
 
-# ============================================================================
-# TRAINING FUNCTIONS
-# ============================================================================
 
 def train_evaluate_lgbm_grid_search(X_train, X_test, y_train, y_test, 
                                    param_grid=None, cv=3, scoring='f1_weighted'):
@@ -48,7 +40,7 @@ def train_evaluate_lgbm_grid_search(X_train, X_test, y_train, y_test,
         X_train = X_train.rename(columns=lambda x: re.sub(r'[^\w]', '_', str(x)))
         X_test = X_test.rename(columns=lambda x: re.sub(r'[^\w]', '_', str(x)))
     
-    # --- 1. Label Encoding for Target (y) ---
+    # Label encoding first
     if y_train.dtype == 'object' or isinstance(y_train[0], str):
         le = LabelEncoder()
         y_train_encoded = le.fit_transform(y_train)
@@ -59,7 +51,7 @@ def train_evaluate_lgbm_grid_search(X_train, X_test, y_train, y_test,
         n_unseen = (~seen_mask).sum()
         
         if n_unseen > 0:
-            print(f"      ⚠ Filtering {n_unseen}/{len(y_test)} test samples with unseen labels")
+            print(f"Filtering {n_unseen}/{len(y_test)} test samples with unseen labels")
             X_test = X_test[seen_mask]
             y_test = y_test[seen_mask]
             
@@ -70,15 +62,15 @@ def train_evaluate_lgbm_grid_search(X_train, X_test, y_train, y_test,
     else:
         y_train_encoded = y_train
         y_test_encoded = y_test
-        # Ensure n_classes is defined even if data is already numeric
+        # Ensure n_classes is defined even if data is already numeric, to combat specific error
         n_classes = len(np.unique(y_train)) 
 
-    # --- 2. Grid Search ---
-    # FIX: Initialize lgbm_base ONCE, ensuring num_class is passed
+
     lgbm_base = lgb.LGBMClassifier(**LGBM_BASE_PARAMS, num_class=n_classes)
     
-    print(f"      Running LightGBM grid search with {len(list(itertools.product(*param_grid.values())))} combinations...")
-    
+    print(f"Running LightGBM grid search with {len(list(itertools.product(*param_grid.values())))} combinations")
+
+    # Grid search
     start_time = time.time()
     grid_search = GridSearchCV(
         estimator=lgbm_base,
@@ -88,7 +80,6 @@ def train_evaluate_lgbm_grid_search(X_train, X_test, y_train, y_test,
         n_jobs=1,
         verbose=0,
         refit=True
-        # Pro-Tip: If you ever want to see the REAL error, add: error_score='raise'
     )
     
     grid_search.fit(X_train, y_train_encoded)
@@ -100,7 +91,6 @@ def train_evaluate_lgbm_grid_search(X_train, X_test, y_train, y_test,
     print(f"      Grid search complete in {grid_search_time:.2f}s")
     print(f"      Best params: {best_params}")
     
-    # --- 3. Evaluate ---
     y_pred = best_model.predict(X_test)
     
     accuracy = accuracy_score(y_test_encoded, y_pred)
@@ -109,6 +99,7 @@ def train_evaluate_lgbm_grid_search(X_train, X_test, y_train, y_test,
     return accuracy, f1score, best_model, best_params, grid_search_time
 
 
+# Simple LGBM implementation without grid search, basically not used for thesis but used for experimenting
 def train_evaluate_lgbm_simple(X_train, X_test, y_train, y_test, lgbm_params=None):
     if lgbm_params is None:
         lgbm_params = {
@@ -120,7 +111,6 @@ def train_evaluate_lgbm_simple(X_train, X_test, y_train, y_test, lgbm_params=Non
             'objective': 'multiclass'
         }
     
-    # --- 1. Label Encoding for Target (y) ---
     if y_train.dtype == 'object' or isinstance(y_train[0], str):
         le = LabelEncoder()
         y_train_encoded = le.fit_transform(y_train)
@@ -137,8 +127,7 @@ def train_evaluate_lgbm_simple(X_train, X_test, y_train, y_test, lgbm_params=Non
         y_test_encoded = y_test
         n_classes = len(np.unique(y_train))
     
-    # --- 2. Train ---
-    # FIX: Pass num_class explicitly here as well
+
     model = lgb.LGBMClassifier(**lgbm_params, num_class=n_classes)
     
     start_time = time.time()
@@ -153,14 +142,11 @@ def train_evaluate_lgbm_simple(X_train, X_test, y_train, y_test, lgbm_params=Non
     
     return accuracy, f1score, model
 
-# ============================================================================
-# MAIN WRAPPER
-# ============================================================================
 
 def train_evaluate_lgbm(X_train, X_test, y_train, y_test, 
                         use_grid_search=True, **kwargs):
     """
-    Wrapper function to choose between grid search and simple training.
+    Wrapper function to choose between grid search and simple training, using grid search is the default
     """
     if use_grid_search:
         return train_evaluate_lgbm_grid_search(X_train, X_test, y_train, y_test, **kwargs)

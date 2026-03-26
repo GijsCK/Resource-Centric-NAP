@@ -13,7 +13,7 @@ def ohe_data(train_df, test_df, feature_cols):
     Parameters:
     - train_df: Training dataframe
     - test_df: Test dataframe  
-    - feature_cols: List of column names to encode (e.g., ['pos_0', 'pos_1', ...])
+    - feature_cols: List of column names to encode
     
     Returns:
     - X_train, X_test: Encoded feature matrices
