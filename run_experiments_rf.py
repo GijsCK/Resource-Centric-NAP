@@ -11,14 +11,14 @@ from modules.rf_trainer import (
 )
 
 # --- CONFIGURATION ---
-DATASETS = ["datasets/BPI_Challenge_2017.xes"]
-#PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
-PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000]
+DATASETS = ["datasets/BPI_Challenge_2013_Incidents.xes"]
+PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
+#PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000]
 #PREFIX_LENGTHS = [100, 150, 200, 400, 600, 800, 1000, 1200, 1400, 1500, 2000, 2500]
 #PREFIX_LENGTHS = [100, 150, 200, 300, 400, 500, 600, 700, 800]
 K_VALUES = [3, 5, 10, 20]
 #METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF'] 
-METHODS = ['Baseline'] # BASELINE OP ALLE LENGTES VOOR 2017 MOET NOG!!!
+METHODS = ['W2V'] # BASELINE OP ALLE LENGTES VOOR 2017 MOET NOG!!!
 
 
 #STRATEGIES = ['prefix', 'sliding_window', 'last_k']
@@ -30,7 +30,7 @@ USE_GRID_SEARCH = True
 GRID_SEARCH_CV = 3   
 GRID_SEARCH_SCORING = 'accuracy' 
 
-RESULTS_FILE = "results/experiment_results_2017_rf.csv"
+RESULTS_FILE = "TEST_RESULTS_D2V.csv"
 os.makedirs("results", exist_ok=True)
 
 print("Configuration loaded")
@@ -163,8 +163,7 @@ if __name__ == "__main__":
                             elif method == 'W2V':
                                 if w2v_model is None:
                                     raise ValueError("Word2Vec model pre-training failed")
-                                X_train, y_train = word2vec.word2vec_embed_data(w2v_model, train_df)
-                                X_test, y_test = word2vec.word2vec_embed_data(w2v_model, test_df)
+                                X_train, X_test, y_train, y_test, model = word2vec.prepare_word2vec_features(train_df, test_df)
                                 
                             elif method == 'D2V':
                                 if d2v_model is None or d2v_le is None:

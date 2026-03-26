@@ -17,10 +17,10 @@ PREFIX_LENGTHS = [10, 20, 30, 40, 50, 75, 100, 125, 150]
 
 
 K_VALUES = [3,5,10, 20]
-METHODS = ['Baseline', 'OHE', 'Bigram', 'W2V', 'D2V', 'BERT', 'ACF']
-STRATEGIES = ['prefix']
+METHODS = [ 'W2V']
+STRATEGIES = ['last_k','prefix']
 
-COMPLEXITY_FILE = "results/encoding_complexity_2013.csv"
+COMPLEXITY_FILE = "results/encoding_complexity_TEST.csv"
 os.makedirs("results", exist_ok=True)
 
 def get_matrix_stats(X):
@@ -120,8 +120,7 @@ if __name__ == "__main__":
                             elif method == 'Bigram':
                                 X_train, X_test = bigram.create_bigram_features_sparse(train_df, test_df, True)
                             elif method == 'W2V':
-                                X_train, _ = word2vec.word2vec_embed_data(w2v_model, train_df)
-                                X_test, _  = word2vec.word2vec_embed_data(w2v_model, test_df)
+                                X_train, X_test, y_train, y_test, model = word2vec.prepare_word2vec_features(train_df, test_df)
                             elif method == 'D2V':
                                 X_train, X_test, _, _ = doc2vec.prepare_doc2vec_features(
                                     d2v_model, train_df, test_df, d2v_le)
