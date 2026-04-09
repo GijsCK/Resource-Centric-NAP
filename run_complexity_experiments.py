@@ -52,7 +52,7 @@ if __name__ == "__main__":
             full_log = import_xes(dataset_path)
             gc.collect()
         except Exception as e:
-            print(f"CRITICAL: Failed to load dataset: {e}")
+            print(f"Critical: Failed to load dataset: {e}")
             continue
 
         for strategy in STRATEGIES:
@@ -148,7 +148,7 @@ if __name__ == "__main__":
                             })
 
                         except Exception as e:
-                            print(f"      ✗ ERROR in {method}: {e}")
+                            print(f"ERROR in {method}: {e}")
                             traceback.print_exc()
 
                 except Exception as e:
